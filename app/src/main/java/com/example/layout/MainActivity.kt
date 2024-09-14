@@ -1,10 +1,13 @@
 package com.example.layout
 
+import android.app.Activity
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -23,21 +26,23 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        var firstName:EditText = findViewById(R.id.etFirstName)
-        var lastName:EditText = findViewById(R.id.etLastName)
-        var age:EditText = findViewById(R.id.etAge)
-        var country:EditText = findViewById(R.id.etCountry)
-        var submitButton:Button = findViewById(R.id.btSubmit)
+        var addImage:Button = findViewById<Button>(R.id.btAddImage)
 
-        submitButton.setOnClickListener {
-            var person:Person = Person(firstName.text.toString(),lastName.text.toString(),age.text.toString().toInt(),country.text.toString())
-            Log.i("MainActvity", person.toString())
-
-          Intent(this,SecondActivity::class.java).also {
-              it.putExtra("EXTRA_PERSON", person)
-              startActivity(it)
-          }
+        addImage.setOnClickListener {
+            Intent(Intent.ACTION_GET_CONTENT).also {
+                it.setType("image/*")
+                startActivityForResult(it,0);
+            }
         }
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK && requestCode == 0){
+            Log.i("MainActivity",data.toString())
+            var uri = data?.data;
+            var imageViewer:ImageView = findViewById(R.id.idImageView)
+            imageViewer.setImageURI(uri)
+        }
     }
 }
